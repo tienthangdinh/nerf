@@ -137,11 +137,14 @@ def train(nerf_model, optimizer, scheduler, data_loader, device='cpu', hn=0, hf=
 if __name__ == '__main__':
     device = 'cuda'
     
+    #HIDDEN DIM = 128
+
     training_dataset = torch.from_numpy(np.load('training_data.pkl', allow_pickle=True))
     testing_dataset = torch.from_numpy(np.load('testing_data.pkl', allow_pickle=True))
-    model = NerfModel(hidden_dim=256).to(device)
+    model = NerfModel(hidden_dim=128).to(device)
     model_optimizer = torch.optim.Adam(model.parameters(), lr=5e-4)
     scheduler = torch.optim.lr_scheduler.MultiStepLR(model_optimizer, milestones=[2, 4, 8], gamma=0.5)
     data_loader = DataLoader(training_dataset, batch_size=1024, shuffle=True)
-    train(model, model_optimizer, scheduler, data_loader, nb_epochs=16, device=device, hn=2, hf=6, nb_bins=192, H=400,
+    training_loss = train(model, model_optimizer, scheduler, data_loader, nb_epochs=3, device=device, hn=2, hf=6, nb_bins=192, H=400,
           W=400)
+    print(training_loss)
